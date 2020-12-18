@@ -1,6 +1,6 @@
 import './App.css';
 import Header from './components/header/header';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Route, HashRouter } from 'react-router-dom';
 import Searching from './components/searching/searching';
 import Sorting from './components/sorting/sorting';
 import Home from './components/home/home';
@@ -20,14 +20,14 @@ function App() {
     }
   };
 
-  const [isAnimationDone, setAnimationDone] = useState(true)
+  const [isAnimationDone, setAnimationDone] = useState(false)
 
   setTimeout(()=>{
     setAnimationDone(true)
   }, 5000)
 
   return (
-    <Router>
+    <HashRouter basename='/'>
       {
         !isAnimationDone 
         ?
@@ -53,7 +53,7 @@ function App() {
             <Footer />
           </div>
       }
-    </Router>
+    </HashRouter>
     
   );
 }

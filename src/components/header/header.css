@@ -17,6 +17,10 @@ header h1 {
 header h1 span {
     color: #1E8FD5;
 }
+header h1 a {
+    text-decoration: none;
+    color: rgba(0,0,0,0.7)
+}
 
 nav ul {
     list-style-type: none;
