@@ -2,5 +2,5 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## For demo follow the below link
-### [DEMO]('https://mdabdulraheem.github.io/algo-visualizer')
+### DEMO
+For demo follow the link [DEMO]('https://mdabdulraheem.github.io/algo-visualizer')

@@ -11,9 +11,17 @@ const Sorting = () => {
     const [isSorting, setIsSorting] = useState(false);
     const [speed, setSpeed] = useState(1000)
 
+    const sortingOptions = {
+        loop: true,
+        autoplay: true, 
+        animationData: sortingData.default,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
     const options = [
         { value: 1, label: 'Selection Sort',  isDisabled: false },
-        { value: 2, label: 'Merge Sort', isDisabled: true },
+        { value: 2, label: 'Merge Sort', isDisabled: false },
         { value: 3, label: 'Quick Sort',  isDisabled: true },
         { value: 4, label: 'Heap Sort',  isDisabled: true },
         { value: 5, label: 'Bubble Sort',  isDisabled: true },
@@ -54,6 +62,10 @@ const Sorting = () => {
             case 1:
                 selectionSort();
                 break;
+            case 2:
+                // let array = [...elements]
+                mergeSort([...JSON.parse(JSON.stringify(elements))], 0, elements.length-1);
+                break;
             default:
                 break;
         }
@@ -90,14 +102,91 @@ const Sorting = () => {
         setIsSorting(false)
     }
 
-    const sortingOptions = {
-        loop: true,
-        autoplay: true, 
-        animationData: sortingData.default,
-        rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
+    let mergeSortArray = [];
+    const mergeSort = async (array, left, right) => {
+        if(left < right) {
+            let mid = Math.floor((left+right)/2);
+            mergeSort(array, left, mid);
+            mergeSort(array, mid+1, right);
+            merge(array, left, mid, right);
+        } else if(left>=right && right === array.length-1) {
+            visualiseMergeSort();
+        } 
+    }
+    const merge = async (array, left, mid, right) => {
+        let p = left;
+        let q = mid + 1;
+        let r = left;
+        let tempArr = new Array(array.length);
+        
+        while( p <= mid && q <= right) {
+            mergeSortArray.push({
+                action: 'compare',
+                elements: [p,q]
+            })
+            if(array[p].number > array[q].number) {
+                tempArr[r] = array[q].number;
+                mergeSortArray.push({
+                    action: 'overwrite',
+                    elements: [r, array[q].number]
+                })
+                q++;
+            } else {
+                tempArr[r] = array[p].number;
+                mergeSortArray.push({
+                    action: 'overwrite',
+                    elements: [r, array[p].number]
+                })
+                p++;
+            }
+            r++;
         }
-    };
+
+        while(p <= mid) {
+            tempArr[r] = array[p].number;
+            mergeSortArray.push({
+                action: 'overwrite',
+                elements: [r, array[p].number]
+            })
+            p++;
+            r++;
+        }
+        while(q <= right) {
+            tempArr[r] = array[q].number;
+            mergeSortArray.push({
+                action: 'overwrite',
+                elements: [r, array[q].number]
+            })
+            q++;
+            r++;
+        }
+        for(let i=left; i<=right; i++) {
+            array[i].number = tempArr[i];
+        }
+    }
+    const visualiseMergeSort = async () => {
+        for(let i=0; i<mergeSortArray.length; i++) {
+            if(mergeSortArray[i].action === "compare") {
+                elements[mergeSortArray[i].elements[0]].minElement = true;
+                elements[mergeSortArray[i].elements[1]].comparingElement = true;
+                setElements([...elements])
+                await wait(speed);
+                elements[mergeSortArray[i].elements[0]].minElement = false;
+                elements[mergeSortArray[i].elements[1]].comparingElement = false;
+                setElements([...elements])
+            } else {
+                elements[mergeSortArray[i].elements[0]].number = mergeSortArray[i].elements[1];
+                setElements([...elements])
+            }
+        }
+        for(let i=0; i<elements.length; i++) {
+            elements[i].sorted = true;
+        }
+        setElements([...elements]);
+        setIsSorting(false);
+    }
+
+
 
     return (
         <div className="algos animate__animated animate__fadeIn">
@@ -175,9 +264,11 @@ const Sorting = () => {
                         <div>
                             <span className="min-element"></span>Minimun Element
                         </div>
-                        <div>
-                            <span className="position-being-sorted"></span>Position Being Sorted
-                        </div>
+                        { selectedAlgo === 1 &&
+                            <div>
+                                <span className="position-being-sorted"></span>Position Being Sorted
+                            </div>
+                        }                        
                         <div>
                             <span className="comparing-element"></span>Comparing Element
                         </div>
